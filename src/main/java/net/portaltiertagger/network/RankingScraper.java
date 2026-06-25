@@ -20,7 +20,7 @@ import java.util.concurrent.Executors;
 
 public class RankingScraper {
 
-    private static final String DATA_URL = "https://portal-production-5ec6.up.railway.app/api/rankings"; 
+    private static final String DATA_URL = "https://portal-production-5ec6.up.railway.app/api/rankings";
 
     private final ExecutorService executor = Executors.newSingleThreadExecutor(r -> {
         Thread t = new Thread(r, "PortalTier-Fetcher");
@@ -32,7 +32,7 @@ public class RankingScraper {
         return CompletableFuture.supplyAsync(() -> {
             try {
                 PortalTierTagger.LOGGER.info("Fetching live tier data from API...");
-                URL url = URI.create(DATA_URL).toURL(); // Fixed Java 21 deprecation
+                URL url = URI.create(DATA_URL).toURL();
                 HttpURLConnection conn = (HttpURLConnection) url.openConnection();
                 conn.setRequestMethod("GET");
                 conn.setRequestProperty("User-Agent", "PortalTierTagger/1.0");
@@ -55,15 +55,18 @@ public class RankingScraper {
 
     private List<RankingEntry> parseJsonArray(JsonArray array) {
         List<RankingEntry> entries = new ArrayList<>();
-        
+
         for (JsonElement element : array) {
             try {
                 JsonObject playerObj = element.getAsJsonObject();
-                
+
                 if (!playerObj.has("minecraftUsername") || playerObj.get("minecraftUsername").isJsonNull()) continue;
                 String username = playerObj.get("minecraftUsername").getAsString();
-                
+
                 if (username == null || username.trim().isEmpty()) continue;
+
+                // ✅ FIX: Normalise the key to lowercase for case‑insensitive matching
+                username = username.toLowerCase();
 
                 RankingEntry entry = new RankingEntry(username);
 
@@ -74,7 +77,7 @@ public class RankingScraper {
                     }
                 }
                 entries.add(entry);
-                
+
             } catch (Exception e) {
                 PortalTierTagger.LOGGER.warn("Failed to parse a player entry");
             }
