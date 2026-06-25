@@ -56,8 +56,8 @@ public class TierTaggerCommand {
             .then(ClientCommandManager.literal("rank")
                 .then(ClientCommandManager.argument("player", StringArgumentType.greedyString())
                     .executes(ctx -> {
-                        String name = StringArgumentType.getString(ctx, "player");
-                        RankingEntry entry = PortalTierTagger.getCache().get(name);
+                        String key = StringArgumentType.getString(ctx, "player").toLowerCase();
+                        RankingEntry entry = PortalTierTagger.getCache().get(key);
                         
                         if (entry != null && entry.getAllTiers() != null && !entry.getAllTiers().isEmpty()) {
                             ModConfig config = PortalTierTagger.getConfig();
