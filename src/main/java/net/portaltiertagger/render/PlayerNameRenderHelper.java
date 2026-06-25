@@ -76,8 +76,8 @@ public class PlayerNameRenderHelper {
             if (!player.isAlive()) continue;
             if (player.isInvisibleTo(client.player)) continue;
 
-            String name = player.getName().getString();
-            RankingEntry entry = PortalTierTagger.getCache().get(name);
+            String key = player.getGameProfile().getName().toLowerCase();
+            RankingEntry entry = PortalTierTagger.getCache().get(key);
 
             // Debug logging
             PortalTierTagger.LOGGER.debug(
